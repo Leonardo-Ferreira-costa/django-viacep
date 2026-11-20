@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Consulta de CEP</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #f0f4f8 0%, #d9e2ec 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            color: #102a43;
+        }
+
+        .card {
+            background: #ffffff;
+            width: 100%;
+            max-width: 440px;
+            padding: 36px 32px;
+            border-radius: 16px;
+            box-shadow: 0 10px 25px rgba(16, 42, 67, 0.08);
+            text-align: center;
+        }
+
+        h2 {
+            font-size: 1.5rem;
+            margin-bottom: 8px;
+            color: #102a43;
+        }
+
+        p.subtitulo {
+            font-size: 0.9rem;
+            color: #627d98;
+            margin-bottom: 24px;
+        }
+
+        .form-grupo {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 14px 16px;
+            font-size: 1.1rem;
+            text-align: center;
+            letter-spacing: 2px;
+            border: 2px solid #bcccdc;
+            border-radius: 10px;
+            outline: none;
+            transition: border-color 0.2s, box-shadow 0.2s;
+            color: #102a43;
+        }
+
+        input[type="text"]:focus {
+            border-color: #2563eb;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+        }
+
+        button {
+            width: 100%;
+            padding: 14px;
+            font-size: 1rem;
+            font-weight: 600;
+            color: #ffffff;
+            background-color: #2563eb;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: background-color 0.2s, transform 0.1s;
+        }
+
+        button:hover {
+            background-color: #1d4ed8;
+        }
+
+        button:active {
+            transform: scale(0.99);
+        }
+
+        .alerta-erro {
+            margin-top: 20px;
+            padding: 12px 16px;
+            background-color: #fee2e2;
+            color: #b91c1c;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .resultado {
+            margin-top: 24px;
+            padding-top: 20px;
+            border-top: 1px solid #e2e8f0;
+            text-align: left;
+        }
+
+        .resultado h3 {
+            font-size: 1rem;
+            color: #334e68;
+            margin-bottom: 12px;
+            text-align: center;
+        }
+
+        .resultado ul {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .resultado li {
+            background-color: #f8fafc;
+            padding: 10px 14px;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            color: #334e68;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .resultado li strong {
+            color: #102a43;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="card">
+        <h2>Consultar Endereço</h2>
+        <p class="subtitulo">Digite o CEP abaixo para buscar os dados</p>
+
+        <form method="POST" class="form-grupo">
+            {% csrf_token %}
+            <input 
+                type="text" 
+                name="cep" 
+                placeholder="00000-000" 
+                maxlength="9" 
+                inputmode="numeric"
+                required
+                autofocus
+            >
+            <button type="submit">Buscar CEP</button>
+        </form>
+
+        {% if erro %}
+            <div class="alerta-erro">
+                {{ erro }}
+            </div>
+        {% endif %}
+
+        {% if endereco %}
+            <div class="resultado">
+                <h3>Endereço Encontrado</h3>
+                <ul>
+                    <li><strong>CEP:</strong> <span>{{ endereco.cep }}</span></li>
+                    <li><strong>Logradouro:</strong> <span>{{ endereco.logradouro|default:"-" }}</span></li>
+                    <li><strong>Bairro:</strong> <span>{{ endereco.bairro|default:"-" }}</span></li>
+                    <li><strong>Cidade/UF:</strong> <span>{{ endereco.localidade }} - {{ endereco.uf }}</span></li>
+                </ul>
+            </div>
+        {% endif %}
+    </div>
+
+</body>
+</html>
